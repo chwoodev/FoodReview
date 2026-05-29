@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		EF0D5D8C2FBF2D3500964666 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EF0D5D8B2FBF2D3500964666 /* Alamofire */; };
+		EF3CE3502FC93E6000A331E9 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = EF3CE34F2FC93E6000A331E9 /* Nuke */; };
+		EF3CE3522FC93E6000A331E9 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = EF3CE3512FC93E6000A331E9 /* NukeUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +29,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF3CE3522FC93E6000A331E9 /* NukeUI in Frameworks */,
 				EF0D5D8C2FBF2D3500964666 /* Alamofire in Frameworks */,
+				EF3CE3502FC93E6000A331E9 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +75,8 @@
 			name = FoodReview;
 			packageProductDependencies = (
 				EF0D5D8B2FBF2D3500964666 /* Alamofire */,
+				EF3CE34F2FC93E6000A331E9 /* Nuke */,
+				EF3CE3512FC93E6000A331E9 /* NukeUI */,
 			);
 			productName = FoodReview;
 			productReference = EF53B5E32FAF248700CBA6AF /* FoodReview.app */;
@@ -102,6 +108,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				EF0D5D8A2FBF2D3500964666 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				EF3CE34E2FC93E6000A331E9 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EF53B5E42FAF248700CBA6AF /* Products */;
@@ -353,6 +360,14 @@
 				minimumVersion = 5.12.0;
 			};
 		};
+		EF3CE34E2FC93E6000A331E9 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.6;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -360,6 +375,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF0D5D8A2FBF2D3500964666 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		EF3CE34F2FC93E6000A331E9 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF3CE34E2FC93E6000A331E9 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		EF3CE3512FC93E6000A331E9 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF3CE34E2FC93E6000A331E9 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

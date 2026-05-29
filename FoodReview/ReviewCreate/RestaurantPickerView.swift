@@ -20,21 +20,7 @@ struct RestaurantPickerView: View {
                 ForEach(viewModel.restaurants) { group in
                     Section(header:
                         HStack{
-                        if let data = Data(base64Encoded: group.imageData), let uiImage = UIImage(data: data) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 36, height: 36)
-                                    .clipShape(Circle())
-                            } else {
-                                Circle()
-                                    .fill(Color.secondary.opacity(0.2))
-                                    .frame(width: 36, height: 36)
-                                    .overlay {
-                                        Image(systemName: "fork.knife")
-                                            .foregroundColor(.secondary)
-                                    }
-                            }
+                            RestaurantIconView(base64String: group.imageData, size: 36)
                             Text(group.name).font(.system(size: 18))
                         }
                         .foregroundStyle(Color(.label))

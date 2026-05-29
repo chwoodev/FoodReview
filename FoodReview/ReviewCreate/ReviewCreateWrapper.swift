@@ -11,6 +11,7 @@ import SwiftUI
 struct ReviewCreateWrapper: View {
     var session: ReviewCreationSession
     @Environment(\.dismiss) private var dismiss
+    let homeViewModel: HomeViewModel
     
     var body: some View {
         NavigationStack{
@@ -53,6 +54,7 @@ struct ReviewCreateWrapper: View {
                             Task {
                                 guard let p  = payload else {return}
                                 _ = try await API.uploadReview(body: p)
+                                homeViewModel.requestFeedUpdate()
                             }
                         }
                     }

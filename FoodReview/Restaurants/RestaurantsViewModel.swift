@@ -17,11 +17,11 @@ extension RestaurantsView {
         
         @MainActor
         func fetchRestaurants() async {
-            isLoading = true
             defer { isLoading = false }
             
             do {
                 restaurants = try await API.getRestaurants().map {toRestaurant(r:$0)}
+                self.error = false
             } catch {
                 self.error = true
             }

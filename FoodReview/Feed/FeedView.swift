@@ -8,34 +8,67 @@
 import SwiftUI
 
 struct FeedView: View {
-    //나중에 viewmodel으로
-    let posts: [FeedPost] = Array(1...50).map { FeedPost(text: "this is a sample \($0)", likes: Int(pow(Double($0), 2))) }
-    
+    @State private var viewModel = ViewModel()
+    @Environment(HomeViewModel.self) private var homeViewModel
+    let updateRequest: Bool
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 24) {
-                ForEach(posts, id: \.self) { post in
-                    FeedPostView(post: post)
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            }
+            if viewModel.error {
+                ContentUnavailableView("오류",
+                                       systemImage: "wifi.exclamationmark")
+            }
+            if !viewModel.isLoading && !viewModel.error {
+                ScrollView {
+                    LazyVStack(spacing: 24) {
+                        ForEach(viewModel.reviews, id: \.self) { review in
+                            let restaurant = viewModel.getRestaurant(menuId: review.menuId)
+                            let menu = viewModel.getMenu(menuId: review.menuId)
+                            FeedPostView(
+                                review: review,
+                                base64Icon: restaurant?.imageData,
+                                restaurantName: restaurant?.name,
+                                menuName: menu?.name
+                            ) {
+                                if homeViewModel.isLoggedIn {
+                                    Task {
+                                        await viewModel.toggleLike(review)
+                                    }
+                                }
+                            }
+                                .contextMenu {
+                                    if review.userId == homeViewModel.userId || homeViewModel.isAdmin {
+                                        Button(role: .destructive) {
+                                            Task {
+                                                await viewModel.deleteReview(id: review.id)
+                                            }
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                    .padding()
+                }
+                .overlay(alignment: .top) {
+                    FeedGradientView()
                 }
             }
-            .padding()
         }
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .frame(height: 70)
-                .mask {
-                    LinearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(hex: 0x000000, opacity: 0.85), location: 0.5),
-                            Gradient.Stop(color: .clear, location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .ignoresSafeArea(edges: .top)
+        .onChange(of: updateRequest) { _, _ in
+            Task {
+                await viewModel.fetchReviews()
+            }
+        }
+        .task {
+            await viewModel.fetchReviews()
+        }
+        .refreshable {
+            await viewModel.fetchReviews()
         }
     }
 }

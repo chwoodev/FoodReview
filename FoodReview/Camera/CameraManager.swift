@@ -93,21 +93,38 @@ final class CameraManager: NSObject, ObservableObject, Sendable, AVCapturePhotoC
             let settings = AVCapturePhotoSettings()
             settings.flashMode = .auto
             
-            
             self.photoOutput.capturePhoto(with: settings, delegate: self)
         }
     }
-    
+
     nonisolated func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: (any Error)?) {
         if error != nil { return }
         
         guard let imageData = photo.fileDataRepresentation(),
               let uiImage = UIImage(data: imageData) else { return }
                 
+        guard let croppedImage = cropToCenterSquare(image: uiImage) else { return }
         
         DispatchQueue.main.async { [weak self] in
-            self?.capturedImage = uiImage
+            self?.capturedImage = croppedImage
         }
+    }
+
+    private func cropToCenterSquare(image: UIImage) -> UIImage? {
+        guard let cgImage = image.cgImage else { return nil }
+        
+        let width = CGFloat(cgImage.width)
+        let height = CGFloat(cgImage.height)
+        let minSide = min(width, height)
+        
+        let x = (width - minSide) / 2
+        let y = (height - minSide) / 2
+        
+        let cropRect = CGRect(x: x, y: y, width: minSide, height: minSide)
+        
+        guard let croppedCgImage = cgImage.cropping(to: cropRect) else { return nil }
+        
+        return UIImage(cgImage: croppedCgImage, scale: image.scale, orientation: image.imageOrientation)
     }
     
     func reset() {

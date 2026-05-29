@@ -27,20 +27,20 @@ struct ReviewCreateView: View {
                    let restaurant = session.selectedRestaurant {
                     HStack{
                         if let data = Data(base64Encoded: restaurant.imageData), let uiImage = UIImage(data: data) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 36, height: 36)
-                                    .clipShape(Circle())
-                            } else {
-                                Circle()
-                                    .fill(Color.secondary.opacity(0.2))
-                                    .frame(width: 36, height: 36)
-                                    .overlay {
-                                        Image(systemName: "fork.knife")
-                                            .foregroundColor(.secondary)
-                                    }
-                            }
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 36, height: 36)
+                                .clipShape(Circle())
+                        } else {
+                            Circle()
+                                .fill(Color.secondary.opacity(0.2))
+                                .frame(width: 36, height: 36)
+                                .overlay {
+                                    Image(systemName: "fork.knife")
+                                        .foregroundColor(.secondary)
+                                }
+                        }
                         Text(restaurant.name).font(.system(size: 18))
                     }
                     .foregroundStyle(Color(.label))
@@ -94,8 +94,7 @@ struct ReviewCreateView: View {
                 .fill(Color(.systemBackground))
         )
         Spacer()
-        TextField("자세한 내용을 적어주세요", text: $session.reviewText, axis: .vertical)
-            .lineLimit(3...5)
+        TextField("자세한 내용을 적어주세요", text: $session.reviewText)
             .focused($isTextFieldFocused)
             .onChange(of: isTextFieldFocused) { newValue, _ in
                 DispatchQueue.main.async {
@@ -104,15 +103,13 @@ struct ReviewCreateView: View {
                     }
                 }
             }
-            .onChange(of: session.reviewText) { _, _ in
-                DispatchQueue.main.async {
-                    withAnimation {
-                        scrollProxy.scrollTo("bottomID", anchor: .bottom)
-                    }
+            .onChange(of: session.reviewText) { _, newValue in
+                if newValue.count > 200 {
+                    session.reviewText = String(newValue.prefix(200))
                 }
             }
             .fontWeight(.regular)
-            .padding(.horizontal)
+            .padding()
             .frame(minHeight: 50)
             .background(
                 RoundedRectangle(cornerRadius: 25)

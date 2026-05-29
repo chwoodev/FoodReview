@@ -19,8 +19,8 @@ struct CameraView: View {
         Button(action: {
             if isTakingPhoto { return }
             isTakingPhoto = true
-//            cameraManager.takePhoto()
-            cameraManager.capturedImage = UIImage(systemName: "house")
+            cameraManager.takePhoto()
+//            cameraManager.capturedImage = UIImage(systemName: "house")
         }){
             Circle()
                 .stroke(Color.black, lineWidth: 2)

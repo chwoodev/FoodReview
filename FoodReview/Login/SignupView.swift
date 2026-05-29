@@ -22,7 +22,7 @@ struct SignupView: View {
         VStack(spacing: 24) {
 
             VStack(spacing: 16) {
-                TextField("Username", text: $username)
+                TextField("유저 아이디", text: $username)
                     .keyboardType(.asciiCapable)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -33,7 +33,7 @@ struct SignupView: View {
                             .fill(Color(.tertiarySystemBackground))
                     )
 
-                SecureField("Password", text: $password)
+                SecureField("비밀번호", text: $password)
                     .padding(.horizontal)
                     .frame(minHeight: 50)
                     .background(
@@ -41,7 +41,7 @@ struct SignupView: View {
                             .fill(Color(.tertiarySystemBackground))
                     )
 
-                SecureField("Confirm Password", text: $confirmPassword)
+                SecureField("비밀번호 확인", text: $confirmPassword)
                     .padding(.horizontal)
                     .frame(minHeight: 50)
                     .background(
@@ -57,7 +57,7 @@ struct SignupView: View {
                     if result { dismiss() }
                 }
             }) {
-                Text("Register")
+                Text("회원가입")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -71,7 +71,7 @@ struct SignupView: View {
             Spacer()
         }
         .padding()
-        .navigationTitle("Sign Up")
+        .navigationTitle("회원가입")
         .background(Color(.secondarySystemBackground))
     }
 }

@@ -8,36 +8,64 @@
 import SwiftUI
 
 struct MenuFeedView: View {
+    @State private var viewModel = ViewModel()
+    @Environment(HomeViewModel.self) private var homeViewModel
     let menu: FoodMenu
-    let posts: [FeedPost] = Array(1...50).map { FeedPost(text: "this is a sample \($0)", likes: Int(pow(Double($0), 2))) }
+    let restaurant: Restaurant
     
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 24) {
-                ForEach(posts, id: \.self) { post in
-                    FeedPostView(post: post)
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            }
+            if viewModel.error {
+                ContentUnavailableView("오류",
+                                       systemImage: "wifi.exclamationmark")
+            }
+            if !viewModel.isLoading && !viewModel.error {
+                ScrollView {
+                    LazyVStack(spacing: 24) {
+                        ForEach(viewModel.reviews, id: \.self) { review in
+                            FeedPostView(
+                                review: review,
+                                imageData: restaurant.imageData,
+                                restaurantName: restaurant.name,
+                                menuName: menu.name
+                            ) {
+                                if homeViewModel.isLoggedIn {
+                                    Task {
+                                        await viewModel.toggleLike(review)
+                                    }
+                                }
+                            }
+                                .contextMenu {
+                                    if review.userId == homeViewModel.userId || homeViewModel.isAdmin {
+                                        Button(role: .destructive) {
+                                            Task {
+                                                await viewModel.deleteReview(id: review.id)
+                                            }
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                    .padding()
+                }
+                .overlay(alignment: .top) {
+                    FeedGradientView()
                 }
             }
-            .padding()
-        }
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .frame(height: 70)
-                .mask {
-                    LinearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(hex: 0x000000, opacity: 0.85), location: 0.5),
-                            Gradient.Stop(color: .clear, location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .ignoresSafeArea(edges: .top)
         }
         .navigationTitle(menu.name)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.fetchReviews(id: menu.id)
+        }
+        .refreshable {
+            await viewModel.fetchReviews(id: menu.id)
+        }
     }
 }

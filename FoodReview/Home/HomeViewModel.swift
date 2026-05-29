@@ -6,26 +6,35 @@
 //
 
 import SwiftUI
+import Observation
 
-extension HomeView{
-    @Observable
-    class ViewModel {
-        var isLoggedIn = false
-        var isLoading = true
-        var isAdmin = false
+@Observable
+class HomeViewModel {
+    var isLoggedIn = false
+    var isLoading = true
+    var isAdmin = false
+    var userId: Int?
+    var updateFeed = false
+    
+    @MainActor
+    func checkLoginState() async {
+        isLoading = true
+        defer { isLoading = false }
         
-        @MainActor
-        func checkLoginState() async {
-            isLoading = true
-            defer { isLoading = false }
-            
-            do {
-                let profile = try await API.getProfile()
-                isLoggedIn = true
-                isAdmin = profile.isAdmin
-            } catch {
-                isLoggedIn = false
-            }
+        do {
+            let profile = try await API.getProfile()
+            isLoggedIn = true
+            isAdmin = profile.isAdmin
+            userId = profile.id
+        } catch {
+            isLoggedIn = false
+            isAdmin = false
+            userId = nil
         }
     }
+    
+    func requestFeedUpdate() {
+        updateFeed = true
+    }
 }
+

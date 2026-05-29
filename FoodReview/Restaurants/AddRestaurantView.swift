@@ -69,7 +69,6 @@ struct AddRestaurantView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     if isLoading {
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
                         Button("Add", systemImage: "checkmark", role: .confirm) {
                             Task {

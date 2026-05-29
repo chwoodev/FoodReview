@@ -38,8 +38,8 @@ class ReviewCreationSession {
     
     func toPayload() -> ReviewPayload? {
         guard let menuId = selectedMenu?.id else { return nil }
-//        let imageData = cameraManager.capturedImage?.jpegData(compressionQuality: 0.8)?.base64EncodedString()
-        let imageData = UIImage(systemName: "house")?.jpegData(compressionQuality: 0.8)?.base64EncodedString()
+        let imageData = cameraManager.capturedImage?.jpegData(compressionQuality: 0.8)?.base64EncodedString()
+//        let imageData = UIImage(systemName: "house")?.jpegData(compressionQuality: 0.8)?.base64EncodedString()
         guard let base64 = imageData else { return nil }
         return ReviewPayload(menuId: menuId, content: reviewText, taste: tasteRating, amount: amountRating, price: priceRating, imageData: base64)
     }

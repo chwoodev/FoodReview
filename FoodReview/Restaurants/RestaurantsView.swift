@@ -9,31 +9,24 @@ import SwiftUI
 
 struct RestaurantsView: View {
     @State private var viewModel = ViewModel()
+    @Environment(HomeViewModel.self) private var homeViewModel
     let isAdmin: Bool
     @State private var isPresentingAddSheet = false
 
     var body: some View {
         NavigationStack {
+            if viewModel.isLoading {
+                ProgressView()
+            }
+            if viewModel.error {
+                ContentUnavailableView("오류",
+                                       systemImage: "wifi.exclamationmark")
+            }
             List {
                 ForEach(Array(viewModel.restaurants.enumerated()), id: \.element.id) { index, restaurant in
-                    NavigationLink(destination: MenusView(restaurant: restaurant, isAdmin: isAdmin)) {
+                    NavigationLink(destination: MenusView(restaurant: restaurant, isAdmin: isAdmin).environment(homeViewModel)) {
                         HStack(spacing: 16) {
-                            if let data = restaurant.imageData, let uiImage = UIImage(data: data) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                            } else {
-                                Circle()
-                                    .fill(Color.secondary.opacity(0.2))
-                                    .frame(width: 50, height: 50)
-                                    .overlay {
-                                        Image(systemName: "fork.knife")
-                                            .foregroundColor(.secondary)
-                                    }
-                            }
-                            
+                            RestaurantIconView(imageData: restaurant.imageData, size: 50)
                             Text(restaurant.name)
                                 .font(.headline)
                             
@@ -42,30 +35,33 @@ struct RestaurantsView: View {
                             HStack(spacing: 4) {
                                 VStack{
                                     Text(convertRatingToGrade(restaurant.taste))
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 20))
                                     Text("맛")
                                         .font(.subheadline)
                                 }
                                 .frame(minWidth: 36)
+                                .padding(.horizontal, 3)
                                 VStack{
                                     Text(convertRatingToGrade(restaurant.amount))
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 20))
                                     Text("양")
                                         .font(.subheadline)
                                 }
                                 .frame(minWidth: 36)
+                                .padding(.horizontal, 3)
                                 VStack{
                                     Text(convertRatingToGrade(restaurant.price))
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 20))
                                     Text("가격")
                                         .font(.subheadline)
                                 }
                                 .frame(minWidth: 36)
+                                .padding(.horizontal, 3)
                             }
                         }
                         .padding(.vertical, 4)
-                        .deleteDisabled(!isAdmin)
                     }
+                    .deleteDisabled(!isAdmin)
                 }
                 .onDelete(perform: { idx in
                     Task {

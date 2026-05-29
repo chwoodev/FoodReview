@@ -7,8 +7,7 @@
 import Foundation
 import Alamofire
 
-//let base = "https://woo.api.newbie.sparcs.me"
-let base = "http://192.168.0.8:3000"
+let base = "https://woo.api.newbie.sparcs.net"
 
 class API {
     private static func fetch<T: Decodable, P: Encodable>(
@@ -30,6 +29,10 @@ class API {
         return try await req.serializingDecodable(T.self).value
     }
     
+    static func getImageURL(imageId: String) -> URL? {
+        return URL(string: "\(base)/images/\(imageId)")
+    }
+    
     static func uploadReview(body: ReviewPayload) async throws -> Review {
         return try await fetch("\(base)/reviews/upload", method: .post, body: body, as: Review.self)
     }
@@ -40,6 +43,10 @@ class API {
     
     static func logIn(body: LoginPayload) async throws -> Profile {
         return try await fetch("\(base)/auth/login", method: .post, body: body, as: Profile.self)
+    }
+    
+    static func logOut() async throws {
+        _ = try await fetch("\(base)/auth/logout", method: .post, as: Empty.self)
     }
     
     static func signUp(body: LoginPayload) async throws -> Profile {
@@ -69,25 +76,33 @@ class API {
     static func createMenu(id: Int, body: MenuCreatePayload) async throws -> RawFoodMenu {
         return try await fetch("\(base)/menus/restaurant/\(id)/create", method: .post, body: body, as: RawFoodMenu.self)
     }
+    
+    static func deleteMenu(id: Int) async throws {
+        _ = try await fetch("\(base)/menus/\(id)", method: .delete, as: Empty.self)
+    }
 
-//    static func getSemesters() async throws -> [Semester] {
-//        return try await fetch("\(base)/api/semesters", as: [Semester].self).sorted {$0.order > $1.order}
-//    }
-//
-//    static func getStudents(subject id: Int) async throws -> [Student] {
-//        return try await fetch("\(base)/api/subjects/\(id)/students", as: [Student].self)
-//    }
-//
-//    static func addStudent(subject id: Int, body: StudentPayload) async throws -> Student{
-//        return try await fetch("\(base)/api/subjects/\(id)/students", method: .post, body: body, as: Student.self)
-//    }
-//    
-//    static func editStudent(student id: Int, body: StudentPayload) async throws -> Student{
-//        return try await fetch("\(base)/api/students/\(id)", method: .patch, body: body, as: Student.self)
-//    }
-//    
-//    static func removeStudent(student id: Int) async throws{
-//         _ = try await fetch("\(base)/api/students/\(id)", method: .delete, as: Empty.self)
-//    }
+    static func getReviews() async throws -> [Review] {
+        return try await fetch("\(base)/reviews", as: [Review].self)
+    }
+    
+    static func getMyReviews() async throws -> [Review] {
+        return try await fetch("\(base)/reviews/my", as: [Review].self)
+    }
+    
+    static func getReviewsForMenu(id: Int) async throws -> [Review] {
+        return try await fetch("\(base)/reviews/menu/\(id)", as: [Review].self)
+    }
+    
+    static func deleteReview(id: Int) async throws {
+        _ = try await fetch("\(base)/reviews/\(id)", method: .delete, as: Empty.self)
+    }
+    
+    static func likeReview(id: Int) async throws -> [Review] {
+        return try await fetch("\(base)/reviews/\(id)/like", method: .post, as: [Review].self)
+    }
+    
+    static func unlikeReview(id: Int) async throws -> [Review] {
+        return try await fetch("\(base)/reviews/\(id)/like", method: .delete, as: [Review].self)
+    }
 
 }

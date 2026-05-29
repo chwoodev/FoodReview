@@ -21,7 +21,7 @@ struct LoginView: View {
             VStack(spacing: 24) {
                 
                 VStack(spacing: 16) {
-                    TextField("Username", text: $username)
+                    TextField("유저 아이디", text: $username)
                         .keyboardType(.asciiCapable)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -32,7 +32,7 @@ struct LoginView: View {
                                 .fill(Color(.tertiarySystemBackground))
                         )
                     
-                    SecureField("Password", text: $password)
+                    SecureField("비밀번호", text: $password)
                         .padding(.horizontal)
                         .frame(minHeight: 50)
                         .background(
@@ -51,9 +51,8 @@ struct LoginView: View {
                     Group{
                         if viewModel.isLoading {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         } else {
-                            Text("Log In")
+                            Text("로그인")
                                 .font(.headline)
                         }
                     }
@@ -69,11 +68,11 @@ struct LoginView: View {
                 Spacer()
                 
                 HStack {
-                    Text("Don't have an account?")
+                    Text("계정이 없으신가요?")
                         .foregroundColor(.secondary)
                     
                     NavigationLink(destination: SignupView()) {
-                        Text("Sign Up")
+                        Text("회원가입")
                             .fontWeight(.semibold)
                             .foregroundColor(.blue)
                     }
@@ -81,7 +80,7 @@ struct LoginView: View {
                 .padding(.bottom, 16)
             }
             .padding()
-            .navigationTitle("Log In")
+            .navigationTitle("로그인")
         }
     }
 }
